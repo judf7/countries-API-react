@@ -1,6 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { createPortal } from 'react-dom';
+import ModalContent from './ModalContent';
 
 export default function Card({ data, compare, inputSearch, inputRange }) {
+  const [showModal,setShowModal]=useState(false)
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const handleCardClick = (country) => {
+    setSelectedCountry(country);
+    setShowModal(true);
+  };
     return (
       <>
         <div className="countries-container">
@@ -23,13 +31,15 @@ export default function Card({ data, compare, inputSearch, inputRange }) {
               }
             })
             .map((country, index) => (
-              <div className="cards" key={index}>
-                <img src={country.flags.svg} alt={`Drapeau de ${country.name.common}`} />
-                <h2>{country.name.common}</h2>
+              <div className="cards" key={index} onClick={()=> handleCardClick(country)}>
+                <img className='my-4' src={country.flags.svg} alt={`Drapeau de ${country.translations.fra.common}`} />
+                <h2>{country.translations.fra.common}</h2>
                 <p>La population est de {country.population}</p>
               </div>
             ))}
         </div>
+        {showModal && createPortal( <ModalContent data={selectedCountry} closeModal={() => setShowModal(false)}/>,
+        document.body)}
       </>
     );
   }
